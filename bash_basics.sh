@@ -441,5 +441,168 @@ cat /tmp/ejemplo.txt
 # ===================================================
 
 # --- 10.1 Fecha y hora ---
-fecha_actual=$(date +
+fecha_actual=$(date +"%Y-%m-%d %H:%M:%S")
+echo "Fecha actual: $fecha_actual"
 
+# Obtener componentes individuales de la fecha
+año=$(date +"%Y")
+mes=$(date +"%m")
+dia=$(date +"%d")
+echo "Año: $año, Mes: $mes, Día: $dia"
+
+# Formato personalizado
+fecha_formateada=$(date +"%d de %B de %Y, %H:%M:%S")
+echo "Fecha formateada: $fecha_formateada"
+
+# Timestamp (útil para cálculos)
+timestamp=$(date +%s)
+echo "Timestamp en segundos: $timestamp"
+
+# Convertir timestamp a fecha legible
+fecha_desde_timestamp=$(date -d @1609459200)  # 01/01/2021 00:00:00
+echo "Fecha desde timestamp: $fecha_desde_timestamp"
+
+# --- 10.2 Comandos de sistema ---
+# Obtener información del sistema
+echo "Sistema operativo:"
+uname -a
+
+# Espacio en disco
+echo "Espacio en disco:"
+df -h | head -n 2
+
+# Memoria del sistema
+echo "Memoria del sistema:"
+free -h | head -n 2
+
+# Usuario actual y directorio de trabajo
+echo "Usuario actual: $(whoami)"
+echo "Directorio actual: $(pwd)"
+
+# --- 10.3 Procesamiento de texto ---
+# grep: buscar texto en archivos
+echo "Buscando 'bash' en /etc/passwd:"
+grep "bash" /etc/passwd
+
+# sed: búsqueda y reemplazo
+echo "Reemplazando texto con sed:"
+echo "Hola Mundo" | sed 's/Mundo/Bash/'
+
+# awk: procesamiento de texto por columnas
+echo "Procesando texto columnar con awk:"
+echo "Juan 25 Madrid" | awk '{print "Nombre: " $1 ", Edad: " $2 ", Ciudad: " $3}'
+
+# sort: ordenar líneas
+echo "Ordenando una lista:"
+echo -e "zebra\nantílope\nelefante" | sort
+
+# wc: contar líneas, palabras y caracteres
+echo "Contando elementos en /etc/passwd:"
+wc /etc/passwd
+
+# --- 10.4 Redes ---
+# Comprobar conexión
+ping -c 1 8.8.8.8 > /dev/null && echo "Internet funcionando" || echo "Sin conexión"
+
+# Ver interfaces de red
+echo "Interfaces de red:"
+ip addr | grep -w inet | head -n 1
+
+# Obtener IP pública
+echo "Consultando IP pública..."
+# curl -s ifconfig.me
+
+# --- 10.5 Procesos ---
+# Ver procesos actuales
+echo "Procesos del usuario actual:"
+ps aux | grep $USER | head -n 2
+
+# PID del script actual
+echo "PID de este script: $$"
+
+# Ver top 3 procesos por uso de CPU
+echo "Top 3 procesos por CPU:"
+ps aux --sort=-%cpu | head -n 4
+
+# --- 10.6 Gestión de errores ---
+# Redirigir errores
+ls /directorio/no/existe 2>/dev/null || echo "El directorio no existe"
+
+# Capturar salida de error
+error=$(ls /directorio/no/existe 2>&1)
+echo "Mensaje de error: $error"
+
+# set -e: terminar el script si algún comando falla
+# Descomenta la siguiente línea para activarlo
+# set -e
+
+# --- 10.7 Variables y entorno ---
+# Variables de entorno importantes
+echo "PATH: $PATH"
+echo "HOME: $HOME"
+echo "USER: $USER"
+echo "SHELL: $SHELL"
+
+# Listar todas las variables de entorno
+echo "Todas las variables de entorno (primeras 3):"
+env | head -n 3
+
+# --- 10.8 Señales y traps ---
+# Manejar señal de interrupción (Ctrl+C)
+trap 'echo "Script interrumpido"; exit 1' SIGINT
+
+# Ejecutar código al finalizar el script
+trap 'echo "Limpiando recursos..."; rm -f /tmp/ejemplo.txt' EXIT
+
+# --- 10.9 Colores y formato ---
+# Códigos de color ANSI
+# Texto
+echo -e "\033[31mTexto en rojo\033[0m"
+echo -e "\033[32mTexto en verde\033[0m"
+echo -e "\033[34mTexto en azul\033[0m"
+
+# Formato
+echo -e "\033[1mTexto en negrita\033[0m"
+echo -e "\033[4mTexto subrayado\033[0m"
+echo -e "\033[7mTexto invertido\033[0m"
+
+# Variables para facilitar el uso de colores
+ROJO="\033[31m"
+VERDE="\033[32m"
+RESET="\033[0m"
+echo -e "${ROJO}Error:${RESET} Mensaje de error"
+echo -e "${VERDE}Éxito:${RESET} Operación completada"
+
+# --- 10.10 Debugging ---
+# Mostrar comandos mientras se ejecutan
+# Descomenta la siguiente línea para activarlo
+# set -x
+
+# Mostrar variables después de la expansión
+# set -v
+
+# Traza de ejecución personalizada
+debug() {
+    [ "$DEBUG" = "true" ] && echo "DEBUG: $*"
+}
+
+# Ejemplo de uso
+DEBUG="true"
+debug "Iniciando proceso..."
+
+# --- 10.11 Opciones de línea de comandos ---
+# Procesar opciones tipo -a -b -c
+while getopts "a:b:c" opt; do
+    case $opt in
+        a) echo "Opción -a con valor: $OPTARG" ;;
+        b) echo "Opción -b con valor: $OPTARG" ;;
+        c) echo "Opción -c activada" ;;
+        \?) echo "Opción inválida: -$OPTARG" ;;
+    esac
+done
+
+# Avanzado: getopt para opciones largas
+# getopt --long help,file:,output: -- "$@"
+
+# === FIN DEL SCRIPT ===
+echo "Script completado exitosamente"
